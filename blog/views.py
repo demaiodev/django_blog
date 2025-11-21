@@ -39,7 +39,7 @@ def serialize_comment(comment):
         'flagged': comment.flagged,
     }
 
-# --- Gemini API Helper Function (The REAL Implementation) ---
+# --- Gemini API Helper Function ---
 
 def classify_comment_safety(comment_text):
     """
@@ -95,8 +95,6 @@ def classify_comment_safety(comment_text):
             return False
 
     return False
-
-# --- API View Classes (REST OF FILE REMAINS UNCHANGED) ---
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PostListCreate(View):
@@ -173,4 +171,25 @@ class CommentCreate(View):
             return JsonResponse({'error': 'Post not found or internal error.'}, status=400)
     
     def options(self, request, *args, **kwargs):
+        return JsonResponse({}, status=204)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FlaggedCommentList(View):
+    """
+    Handles GET requests to list all comments flagged by the moderation system.
+    """
+    def get(self, request):
+        try:
+            # Filter comments where the 'flagged' field is True
+            flagged_comments = Comment.objects.filter(flagged=True).order_by('-created_date')
+            
+            # The serialize_comment helper must be updated to include post_id
+            data = [serialize_comment(comment) for comment in flagged_comments]
+            
+            return JsonResponse(data, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': f'Failed to retrieve flagged comments: {e}'}, status=500)
+            
+    def options(self, request, *args, **kwargs):
+        # OPTIONS request handler for CORS preflight
         return JsonResponse({}, status=204)

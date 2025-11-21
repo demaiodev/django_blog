@@ -11,4 +11,7 @@ urlpatterns = [
 
     # POST /api/comments/ - Create a new comment
     path('comments/', views.CommentCreate.as_view(), name='comment-create'),
+
+    # GET /api/comments/flagged/ - List all flagged comments for moderation
+    path('comments/flagged/', views.FlaggedCommentList.as_view(), name='flagged-comment-list'),
 ]
