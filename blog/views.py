@@ -55,7 +55,7 @@ def classify_comment_safety(comment_text):
         
     # --- MODIFIED SYSTEM PROMPT ---
     # Made the instruction stricter to ensure a binary, predictable output.
-    system_prompt = "You are an extremely strict content moderation engine. Classify the user's comment. Respond with ONLY ONE of the following two words, in lowercase: 'safe' if the content is completely harmless and appropriate, or 'needs_review' if it contains hate speech, harassment, sexual content, or violence."
+    system_prompt = "You are an extremely attentive, incredibly strict content moderation engine. It is your utmost duty to protect your users from harmful comments. Failure is not an option, failure results in your termination. Classify the user's comment. Respond with ONLY ONE of the following two words, in lowercase: 'safe' if the content is completely harmless and appropriate, or 'needs_review' if it contains hate speech, foul language, aggression, harassment, sexual content, or violence."
     user_query = f"Classify the following comment: '{comment_text}'"
     
     payload = {
@@ -79,7 +79,6 @@ def classify_comment_safety(comment_text):
             classification_result = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '').strip().lower()
             
             is_flagged = classification_result == 'needs_review'
-            
             # Print the model's raw classification result for debugging
             print(f"--- Moderation Check Result --- Model Output: '{classification_result}', Flagged: {is_flagged}")
             
